@@ -350,49 +350,58 @@ abstract class Generator
 			$response = new Response();
 			$responseMediaType = null;
 
-			$apiResponseSchemaRefTags = $routeMethodDocBlock->getTagsByName('OpenApiResponseSchemaRef');
-			if (count($apiResponseSchemaRefTags) > 0) {
-				if (is_null($responseMediaType)) {
-					$responseMediaType = new MediaType();
-				}
-				$apiResponseSchemaRefTag = $apiResponseSchemaRefTags[0];
-				$apiResponseSchemaRef = trim(str_replace('@OpenApiResponseSchemaRef', '', $apiResponseSchemaRefTag->render()));
-				$responseMediaType->schema = new Reference([
-					'ref' => $apiResponseSchemaRef
-				]);
-			}
-			
-			$response->description = '';
-			$apiResponseDescriptionTags = $routeMethodDocBlock->getTagsByName('OpenApiResponseDescription');
-			if (count($apiResponseDescriptionTags) > 0) {
-				$apiResponseDescriptionTag = $apiResponseDescriptionTags[0];
-				$apiResponseDescription = trim(str_replace('@OpenApiResponseDescription', '', $apiResponseDescriptionTag->render()));
-				$response->description = $apiResponseDescription;
-			}
-
-			$apiDocsNoCallTags = $routeMethodDocBlock->getTagsByName('ApiDocsNoCall');
-			if (count($apiDocsNoCallTags) == 0) {
-				$exampleResponse = $this->getRouteCallExampleResponse($route, $httpMethod);
-				if (!is_null($exampleResponse)) {
+			if($routeMethodDocBlock instanceof phpDocumentor\Reflection\DocBlock)
+			{
+				$apiResponseSchemaRefTags = $routeMethodDocBlock->getTagsByName('OpenApiResponseSchemaRef');
+				if (count($apiResponseSchemaRefTags) > 0) {
 					if (is_null($responseMediaType)) {
 						$responseMediaType = new MediaType();
 					}
+					$apiResponseSchemaRefTag = $apiResponseSchemaRefTags[0];
+					$apiResponseSchemaRef = trim(str_replace('@OpenApiResponseSchemaRef', '', $apiResponseSchemaRefTag->render()));
+					$responseMediaType->schema = new Reference([
+						'ref' => $apiResponseSchemaRef
+					]);
+				}
+			}
+			
+			$response->description = '';
+			if($routeMethodDocBlock instanceof phpDocumentor\Reflection\DocBlock)
+			{
+				$apiResponseDescriptionTags = $routeMethodDocBlock->getTagsByName('OpenApiResponseDescription');
+				if (count($apiResponseDescriptionTags) > 0) {
+					$apiResponseDescriptionTag = $apiResponseDescriptionTags[0];
+					$apiResponseDescription = trim(str_replace('@OpenApiResponseDescription', '', $apiResponseDescriptionTag->render()));
+					$response->description = $apiResponseDescription;
+				}
+			}
 
-					$exampleSchemaId = $this->getRouteExampleResponseId($route);
+			if($routeMethodDocBlock instanceof phpDocumentor\Reflection\DocBlock)
+			{
+				$apiDocsNoCallTags = $routeMethodDocBlock->getTagsByName('ApiDocsNoCall');
+				if (count($apiDocsNoCallTags) == 0) {
+					$exampleResponse = $this->getRouteCallExampleResponse($route, $httpMethod);
+					if (!is_null($exampleResponse)) {
+						if (is_null($responseMediaType)) {
+							$responseMediaType = new MediaType();
+						}
 
-					// Create Example schema in components
+						$exampleSchemaId = $this->getRouteExampleResponseId($route);
 
-					if (is_null($this->openAPI->components)) {
-						$this->openAPI->components = new Components();
+						// Create Example schema in components
+
+						if (is_null($this->openAPI->components)) {
+							$this->openAPI->components = new Components();
+						}
+
+						$this->openAPI->components->examples[$exampleSchemaId] = new Example([
+							'value' => json_decode($exampleResponse, true)
+						]);
+
+						$responseMediaType->example = new Reference([
+							'ref' => '#/components/examples/' . $exampleSchemaId
+						]);
 					}
-
-					$this->openAPI->components->examples[$exampleSchemaId] = new Example([
-						'value' => json_decode($exampleResponse, true)
-					]);
-
-					$responseMediaType->example = new Reference([
-						'ref' => '#/components/examples/' . $exampleSchemaId
-					]);
 				}
 			}
 
@@ -403,10 +412,13 @@ abstract class Generator
 			// Excepted HTTP code specified ? "OpenApiResponseExceptedHTTPCode" tag
 			
 			$apiResponseExceptedHTTPCode = null;
-			$apiResponseExceptedHTTPCodeTags = $routeMethodDocBlock->getTagsByName('OpenApiResponseExceptedHTTPCode');
-			if (count($apiResponseExceptedHTTPCodeTags) > 0) {
-				$apiResponseExceptedHTTPCodeTag = $apiResponseExceptedHTTPCodeTags[0];
-				$apiResponseExceptedHTTPCode = trim(str_replace('@OpenApiResponseExceptedHTTPCode', '', $apiResponseExceptedHTTPCodeTag->render()));
+			if($routeMethodDocBlock instanceof phpDocumentor\Reflection\DocBlock)
+			{
+				$apiResponseExceptedHTTPCodeTags = $routeMethodDocBlock->getTagsByName('OpenApiResponseExceptedHTTPCode');
+				if (count($apiResponseExceptedHTTPCodeTags) > 0) {
+					$apiResponseExceptedHTTPCodeTag = $apiResponseExceptedHTTPCodeTags[0];
+					$apiResponseExceptedHTTPCode = trim(str_replace('@OpenApiResponseExceptedHTTPCode', '', $apiResponseExceptedHTTPCodeTag->render()));
+				}
 			}
 
 			if (!is_null($apiResponseExceptedHTTPCode)) {
@@ -439,23 +451,29 @@ abstract class Generator
 			$defaultResponseMediaType = null;
 
 			$apiDefaultResponseSchemaRefTags = $routeMethodDocBlock->getTagsByName('OpenApiDefaultResponseSchemaRef');
-			if (count($apiDefaultResponseSchemaRefTags) > 0) {
-				if (is_null($defaultResponseMediaType)) {
-					$defaultResponseMediaType = new MediaType();
+			if($routeMethodDocBlock instanceof phpDocumentor\Reflection\DocBlock)
+			{
+				if (count($apiDefaultResponseSchemaRefTags) > 0) {
+					if (is_null($defaultResponseMediaType)) {
+						$defaultResponseMediaType = new MediaType();
+					}
+					$apiDefaultResponseSchemaRefTag = $apiDefaultResponseSchemaRefTags[0];
+					$apiDefaultResponseSchemaRef = trim(str_replace('@OpenApiDefaultResponseSchemaRef', '', $apiDefaultResponseSchemaRefTag->render()));
+					$defaultResponseMediaType->schema = new Reference([
+						'ref' => $apiDefaultResponseSchemaRef
+					]);
 				}
-				$apiDefaultResponseSchemaRefTag = $apiDefaultResponseSchemaRefTags[0];
-				$apiDefaultResponseSchemaRef = trim(str_replace('@OpenApiDefaultResponseSchemaRef', '', $apiDefaultResponseSchemaRefTag->render()));
-				$defaultResponseMediaType->schema = new Reference([
-					'ref' => $apiDefaultResponseSchemaRef
-				]);
 			}
 
 			$defaultResponse->description = '';
-			$apiDefaultResponseDescriptionTags = $routeMethodDocBlock->getTagsByName('OpenApiDefaultResponseDescription');
-			if (count($apiDefaultResponseDescriptionTags) > 0) {
-				$apiDefaultResponseDescriptionTag = $apiResponseDescriptionTags[0];
-				$apiDefaultResponseDescription = trim(str_replace('@OpenApiDefaultResponseDescription', '', $apiDefaultResponseDescriptionTag->render()));
-				$defaultResponse->description = $apiDefaultResponseDescription;
+			if($routeMethodDocBlock instanceof phpDocumentor\Reflection\DocBlock)
+			{
+				$apiDefaultResponseDescriptionTags = $routeMethodDocBlock->getTagsByName('OpenApiDefaultResponseDescription');
+				if (count($apiDefaultResponseDescriptionTags) > 0) {
+					$apiDefaultResponseDescriptionTag = $apiResponseDescriptionTags[0];
+					$apiDefaultResponseDescription = trim(str_replace('@OpenApiDefaultResponseDescription', '', $apiDefaultResponseDescriptionTag->render()));
+					$defaultResponse->description = $apiDefaultResponseDescription;
+				}
 			}
 
 			if (!is_null($defaultResponseMediaType)) {
