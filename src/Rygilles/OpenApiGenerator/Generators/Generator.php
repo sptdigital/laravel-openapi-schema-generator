@@ -498,7 +498,7 @@ abstract class Generator
 	protected function getDocBlockOperationTags($docBlock)
 	{
 		if(!$docBlock instanceof phpDocumentor\Reflection\DocBlock)
-			return null;
+			return [];
 		
 		$apiOperationTagTags = $docBlock->getTagsByName('OpenApiOperationTag');
 		foreach ($apiOperationTagTags as $apiOperationTagTag) {
