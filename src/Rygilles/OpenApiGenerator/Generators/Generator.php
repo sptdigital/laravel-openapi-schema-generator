@@ -450,9 +450,9 @@ abstract class Generator
 			$defaultResponse = new Response();
 			$defaultResponseMediaType = null;
 
-			$apiDefaultResponseSchemaRefTags = $routeMethodDocBlock->getTagsByName('OpenApiDefaultResponseSchemaRef');
 			if($routeMethodDocBlock instanceof phpDocumentor\Reflection\DocBlock)
 			{
+				$apiDefaultResponseSchemaRefTags = $routeMethodDocBlock->getTagsByName('OpenApiDefaultResponseSchemaRef');
 				if (count($apiDefaultResponseSchemaRefTags) > 0) {
 					if (is_null($defaultResponseMediaType)) {
 						$defaultResponseMediaType = new MediaType();
