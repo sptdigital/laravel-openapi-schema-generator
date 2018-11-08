@@ -194,7 +194,7 @@ abstract class Generator
 				$operation->operationId = $this->getDocBlockOperationId($routeMethodDocBlock);
 			}
 
-			if (is_null($operation->operationId)) {
+			if (is_null($operation->operationId) && isset($routeAction['as'])) {
 				switch (strtolower($httpMethod)) {
 					case 'patch':
 					case 'put':
