@@ -476,6 +476,9 @@ abstract class Generator
 	 */
 	protected function getDocBlockOperationId($docBlock)
 	{
+		if(!$docBlock instanceof phpDocumentor\Reflection\DocBlock)
+			return null;
+		
 		$apiOperationIdTags = $docBlock->getTagsByName('OpenApiOperationId');
 		if (count($apiOperationIdTags) > 0) {
 			$apiOperationIdTag = $apiOperationIdTags[0];
@@ -494,6 +497,9 @@ abstract class Generator
 	 */
 	protected function getDocBlockOperationTags($docBlock)
 	{
+		if(!$docBlock instanceof phpDocumentor\Reflection\DocBlock)
+			return null;
+		
 		$apiOperationTagTags = $docBlock->getTagsByName('OpenApiOperationTag');
 		foreach ($apiOperationTagTags as $apiOperationTagTag) {
 			$apiOperationTag = trim(str_replace('@OpenApiOperationTag', '',$apiOperationTagTag->render()));
@@ -531,6 +537,9 @@ abstract class Generator
 	 */
 	protected function getDocBlockExtraParameterRefTags($docBlock)
 	{
+		if(!$docBlock instanceof phpDocumentor\Reflection\DocBlock)
+			return [];
+		
 		$results = [];
 		$apiExtraParameterRefTags = $docBlock->getTagsByName('OpenApiExtraParameterRef');
 
