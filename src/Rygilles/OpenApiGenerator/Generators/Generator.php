@@ -739,6 +739,8 @@ abstract class Generator
 		$parameters = [];
 
 		$routeAction = $route->getAction();
+		if($routeAction['uses'] instanceof \Closure)
+            		return [];
 		list($class, $method) = explode('@', $routeAction['uses']);
 
 		$reflection = new ReflectionClass($class);
@@ -788,6 +790,8 @@ abstract class Generator
 	protected function getRouteValidationRules($route)
 	{
 		$routeAction = $route->getAction();
+		if($routeAction['uses'] instanceof \Closure)
+            		return [];
 		list($class, $method) = explode('@', $routeAction['uses']);
 
 		$reflection = new ReflectionClass($class);
@@ -851,6 +855,8 @@ abstract class Generator
 	protected function getRouteControllerDocBlock($route)
 	{
 		$routeAction = $route->getAction();
+		if($routeAction['uses'] instanceof \Closure)
+		    return null;
 		list($class, $method) = explode('@', $routeAction['uses']);
 
 		$reflectionClass = new ReflectionClass($class);
@@ -873,6 +879,8 @@ abstract class Generator
 	protected function getRouteMethodDocBlock($route)
 	{
 		$routeAction = $route->getAction();
+		if($routeAction['uses'] instanceof \Closure)
+		    return null;
 		list($class, $method) = explode('@', $routeAction['uses']);
 
 		$reflectionClass = new ReflectionClass($class);
